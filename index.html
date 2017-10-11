@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Multi-step HTML5 and jQuery form</title>
+  <!--Stylesheet-->
+  <link rel="stylesheet" type="text/css" href="css/form.css" />
+  <link rel="stylesheet" type="text/css" href="css/grid.css" />
+  <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+  <!--Scripts-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Work+Sans" rel="stylesheet">
+</head>
+<body>
+  <section class="gray-bg">
+    <div class="container">
+      <h1>Multi-Step form by <a href="http://getrussell.com">Jeremy Russell</a></h1>
+      <div class="formWrapAround">
+        <div class="formWrap">
+          <div class="form-wrapper">
+            <!-- The above form looks like this -->
+            <form role="form" id="cta" class="registration-form" action="javascript:void(0);">
+              <fieldset id="first">
+                <h2 class="form-title">First set of options</h2>
+                <select class="u-full-width" id="sel" name="amount">
+    <option value="hide">Select Option </option>
+      <option>Option 1</option>
+      <option>Option 2</option>
+      <option>Option 3</option>
+      <option>Option 4</option>
+</select>
+              </fieldset>
+              <fieldset id="second">
+                <h2 class="form-title">Second set of options</h2>
+                <select class="u-full-width" id="sel" name="amount">
+    <option value="hide">Select Option</option>
+      <option>Option 1</option>
+      <option>Option 2</option>
+      <option>Option 3</option>
+      <option>Option 4</option>
+</select>
+              </fieldset>
+              <fieldset id="third">
+                <h2 class="form-title">Third set of options</h2>
+                <select class="u-full-width" id="sel" name="amount">
+             <option value="hide">Select Option</option>
+  <option>Option 1</option>
+      <option>Option 2</option>
+      <option>Option 3</option>
+      <option>Option 4</option>
+</select>
+              </fieldset>
+
+              <fieldset id="fourth">
+                <div class="row">
+                  <div class="six columns">
+                    <label for="exampleEmailInput">First Name</label>
+                    <input class="u-full-width" type="text" placeholder="" id="exampleEmailInput">
+                  </div>
+                  <div class="form-group six columns">
+                    <label for="exampleEmailInput">Last Name</label>
+                    <input class="u-full-width" type="text" placeholder="" id="exampleEmailInput">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group twelve columns">
+                    <label for="exampleEmailInput">Email Address</label>
+                    <input class="u-full-width" type="email" placeholder="" id="exampleEmailInput">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group six columns">
+                    <label for="exampleEmailInput">Zip Code</label>
+                    <input class="u-full-width" type="text" placeholder="" id="exampleEmailInput">
+                  </div>
+                  <div class="form-group six columns">
+                    <label for="exampleEmailInput">Phone Number</label>
+                    <input class="u-full-width" type="text" placeholder="" id="exampleEmailInput">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group twelve columns">
+                  </div>
+                </div>
+                <div class="row">
+                  <button type="button" class="mainButton submitBtn submit-form" href="#" type="submit">Go ahead, pity the fool</button>
+                </div>
+              </fieldset>
+            </form>
+            <!-- Always wrap checkbox and radio inputs in a label and use a <span class="label-body"> inside of it -->
+            <!-- Note: The class .u-full-width is just a utility class shorthand for width: 100% -->
+            <img class="iconSvg" src="img/earth.svg" alt="i pity the fool all day every day">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Multi-step logic -->
+  <script>
+    var i = 1;
+    let fieldset = $('.registration-form fieldset:nth-child(' + i + ')');
+
+    $('.registration-form fieldset:nth-child(' + i + ')').fadeIn('slow');
+
+    $('.registration-form').change(function() {
+      console.log('.registration-form fieldset:nth-child(' + i + ')');
+
+      $('.registration-form fieldset:nth-child(' + i + ')').fadeOut(400, function() {
+        i++;
+        $('.registration-form fieldset:nth-child(' + i + ')').fadeIn();
+        console.log(i);
+      });
+
+    });
+  </script>
+  <!-- Custom style for Selct/Option -->
+  <script>
+    $('select').each(function() {
+      var $this = $(this),
+        numberOfOptions = $(this).children('option').length;
+
+      $this.addClass('select-hidden');
+      $this.wrap('<div class="select"></div>');
+      $this.after('<div class="select-styled"></div>');
+
+      var $styledSelect = $this.next('div.select-styled');
+      $styledSelect.text($this.children('option').eq(0).text());
+
+      var $list = $('<ul />', {
+        'class': 'select-options'
+      }).insertAfter($styledSelect);
+
+      for (var i = 0; i < numberOfOptions; i++) {
+        $('<li />', {
+          text: $this.children('option').eq(i).text(),
+          rel: $this.children('option').eq(i).val()
+        }).appendTo($list);
+      }
+
+      var $listItems = $list.children('li');
+
+      $styledSelect.click(function(e) {
+        e.stopPropagation();
+        $('div.select-styled.active').not(this).each(function() {
+          $(this).removeClass('active').next('ul.select-options').hide();
+        });
+        $(this).toggleClass('active').next('ul.select-options').toggle();
+      });
+
+      $listItems.click(function(e) {
+        e.stopPropagation();
+        $styledSelect.text($(this).text()).removeClass('active');
+        $this.val($(this).attr('rel'));
+        $list.hide();
+        $('.registration-form').change();
+
+        //console.log($this.val());
+      });
+
+      $(document).click(function() {
+        $styledSelect.removeClass('active');
+        $list.hide();
+        $(styledSelect).trigger("change");
+      });
+
+    });
+  </script>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-56060289-1']);
+    _gaq.push(['_trackPageview']);
+    setTimeout("_gaq.push(['_trackEvent', '15_seconds', 'read'])", 15000);
+
+    (function() {
+      var ga = document.createElement('script');
+      ga.type = 'text/javascript';
+      ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+</body>
+
+</html>
